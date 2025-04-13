@@ -47,14 +47,6 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <div className="flex space-x-4">
-          {isClient && typeof window !== "undefined" && "Notification" in window && Notification.permission !== "granted" && (
-            <Button
-              onClick={() => Notification.requestPermission()}
-              className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700 hover:text-amber-400 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300"
-            >
-              Enable Notifications
-            </Button>
-          )}
           <Link href="/dashboard/meetings/new">
             <Button
               variant="outline"

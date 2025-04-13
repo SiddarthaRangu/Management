@@ -1,256 +1,220 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
+import { useParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Trash2, Bell, X } from "lucide-react"
-import { saveData, loadData } from "@/lib/storage"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Mail, Phone } from "lucide-react"
 
-const NOTIFICATION_TIMES = [
-  { id: 1, ms: 24 * 60 * 60 * 1000, label: "24 hours" },
-  { id: 2, ms: 5 * 60 * 60 * 1000, label: "5 hours" },
-  { id: 3, ms: 60 * 60 * 1000, label: "1 hour" },
-  { id: 4, ms: 10 * 60 * 1000, label: "10 minutes" },
-]
+export default function PartyDetailsPage() {
+  const router = useRouter()
+  const params = useParams()
+  const partyId = params.id
 
-const parseEventDateTime = (dateString, timeString) => {
-  const [year, month, day] = dateString.split("-").map(Number)
-  const timeParts = timeString.replace(/[^0-9]/g, " ").split(" ").filter(Boolean)
-  
-  let hours = parseInt(timeParts[0], 10) || 0
-  let minutes = parseInt(timeParts[1], 10) || 0
-
-  // Handle PM times without colon (e.g., 6PM)
-  if (timeString.toLowerCase().includes("pm") && hours < 12) hours += 12
-  if (timeString.toLowerCase().includes("am") && hours === 12) hours = 0
-
-  const date = new Date(year, month - 1, day, hours, minutes)
-  return isNaN(date) ? null : date
-}
-
-export default function PartiesPage() {
-  const [filter, setFilter] = useState("all")
-  const [parties, setParties] = useState([])
-  const [notifications, setNotifications] = useState([])
-  const [browserNotifications, setBrowserNotifications] = useState(false)
-
-  useEffect(() => {
-    const savedParties = loadData("parties") || []
-    setParties(savedParties.length ? savedParties : initializeParties())
-    
-    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
-      setBrowserNotifications(true)
-    }
-    
-    const interval = setInterval(checkForEvents, 30000) // Check every 30 seconds
-    return () => clearInterval(interval)
-  }, [])
-
-  const initializeParties = () => {
-    const initialParties = [
+  // Mock party data
+  const [party, setParty] = useState({
+    id: partyId,
+    title: "Spring Networking Event",
+    date: "2025-04-20",
+    time: "6:00 PM",
+    location: "Grand Hotel",
+    invitees: [
       {
         id: 1,
-        title: "Sample Event",
-        date: new Date().toISOString().split('T')[0],
-        time: "16:04",
-        location: "Test Location",
-        invitees: 10,
-        confirmed: 5,
-        type: "national"
-      }
-    ]
-    saveData("parties", initialParties)
-    return initialParties
+        email: "john@example.com",
+        whatsapp: "+1234567890",
+        allowPlusOne: true,
+        rsvp: "pending",
+        guestName: "",
+        invitationSent: false,
+      },
+      {
+        id: 2,
+        email: "sarah@example.com",
+        whatsapp: "+1987654321",
+        allowPlusOne: false,
+        rsvp: "yes",
+        guestName: "",
+        invitationSent: true,
+      },
+      {
+        id: 3,
+        email: "mike@example.com",
+        whatsapp: "+1122334455",
+        allowPlusOne: true,
+        rsvp: "no",
+        guestName: "",
+        invitationSent: true,
+      },
+      {
+        id: 4,
+        email: "lisa@example.com",
+        whatsapp: "+1555666777",
+        allowPlusOne: true,
+        rsvp: "yes",
+        guestName: "David Smith",
+        invitationSent: true,
+      },
+      {
+        id: 5,
+        email: "alex@example.com",
+        whatsapp: "+1999888777",
+        allowPlusOne: false,
+        rsvp: "maybe",
+        guestName: "",
+        invitationSent: false,
+      },
+    ],
+  })
+
+  // Rest of your component logic remains the same...
+  const updateRSVP = (id, rsvp) => {
+    const updatedInvitees = party.invitees.map((invitee) => (invitee.id === id ? { ...invitee, rsvp } : invitee))
+    setParty({ ...party, invitees: updatedInvitees })
   }
 
-  const checkForEvents = () => {
-    const now = Date.now()
-    const newNotifications = []
+  const updateGuestName = (id, guestName) => {
+    const updatedInvitees = party.invitees.map((invitee) => (invitee.id === id ? { ...invitee, guestName } : invitee))
+    setParty({ ...party, invitees: updatedInvitees })
+  }
 
-    parties.forEach(party => {
-      const eventDate = parseEventDateTime(party.date, party.time)
-      if (!eventDate || eventDate < now) return
+  const sendInvitation = (id) => {
+    const updatedInvitees = party.invitees.map((invitee) =>
+      invitee.id === id ? { ...invitee, invitationSent: true } : invitee,
+    )
+    setParty({ ...party, invitees: updatedInvitees })
 
-      NOTIFICATION_TIMES.forEach(notification => {
-        const timeDiff = eventDate - now
-        if (timeDiff <= notification.ms && timeDiff > 0) {
-          const exists = notifications.some(n => 
-            n.partyId === party.id && n.interval === notification.ms
-          )
-          
-          if (!exists) {
-            newNotifications.push({
-              id: `${party.id}-${notification.ms}-${now}`,
-              partyId: party.id,
-              title: party.title,
-              message: `${party.title} starts in ${notification.label}`,
-              interval: notification.ms
-            })
-          }
-        }
-      })
-    })
+    const invitee = party.invitees.find((i) => i.id === id)
+    alert(`Invitation sent to ${invitee.email} and WhatsApp ${invitee.whatsapp}!`)
+  }
 
-    if (newNotifications.length > 0) {
-      setNotifications(prev => [...newNotifications, ...prev])
-      
-      if (browserNotifications) {
-        newNotifications.forEach(({ message }) => {
-          new Notification("Event Reminder", { body: message })
-        })
-      }
+  const sendAllInvitations = () => {
+    const pendingInvitees = party.invitees.filter((invitee) => !invitee.invitationSent)
+
+    if (pendingInvitees.length === 0) {
+      alert("All invitations have already been sent!")
+      return
     }
-  }
 
-  const handleDeleteParty = (partyId) => {
-    if (confirm("Delete this party?")) {
-      const updated = parties.filter(p => p.id !== partyId)
-      setParties(updated)
-      saveData("parties", updated)
-    }
+    const updatedInvitees = party.invitees.map((invitee) =>
+      !invitee.invitationSent ? { ...invitee, invitationSent: true } : invitee,
+    )
+    setParty({ ...party, invitees: updatedInvitees })
+    alert(`Invitations sent to ${pendingInvitees.length} guests via email and WhatsApp!`)
   }
-
-  const requestNotifications = () => {
-    Notification.requestPermission().then(permission => {
-      setBrowserNotifications(permission === "granted")
-      if (permission === "granted") {
-        new Notification("Notifications Enabled", {
-          body: "You'll receive reminders for upcoming events",
-        })
-      }
-    })
-  }
-
-  const removeNotification = (id) => {
-    setNotifications(prev => prev.filter(n => n.id !== id))
-  }
-
-  const filteredParties = parties.filter(p => 
-    filter === "all" ? true : p.type === filter
-  )
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
-      {/* In-App Notifications */}
-      <div className="fixed top-4 right-4 space-y-2 z-50 w-80">
-        {notifications.map(n => (
-          <div 
-            key={n.id} 
-            className="p-4 bg-gray-800 border-2 border-amber-400 rounded-lg shadow-lg transition-all duration-300 
-            hover:border-3 hover:border-amber-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-amber-500/20"
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="font-bold text-white">{n.title}</p>
-                <p className="text-amber-400 text-sm mt-1">{n.message}</p>
-              </div>
-              <button 
-                onClick={() => removeNotification(n.id)}
-                className="text-gray-400 hover:text-amber-500 ml-2 transition-all hover:scale-110"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Header Section */}
-      <div className="flex items-center justify-between gap-4 flex-wrap mb-8">
-        <h1 className="text-3xl font-bold text-white">Events</h1>
-        <div className="flex gap-4 items-center">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="bg-gray-800 text-white px-4 py-2 rounded-md border border-gray-700 focus:ring-2 focus:ring-amber-400
-            transition-all duration-300 hover:border-amber-400"
-          >
-            <option value="all">All Events</option>
-            <option value="national">National</option>
-            <option value="international">International</option>
-          </select>
-
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-extrabold">{party.title}</h1>
+          <p className="text-gray-400">
+            {party.date} at {party.time} • {party.location}
+          </p>
+        </div>
+        <div className="flex space-x-4">
           <Button
-            onClick={requestNotifications}
-            className={`${browserNotifications ? "bg-green-600" : "bg-gray-800"} hover:bg-opacity-80 text-white 
-            transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-amber-500/20`}
+            variant="outline"
+            className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700 flex items-center gap-2"
+            onClick={sendAllInvitations}
           >
-            <Bell className="mr-2 h-4 w-4" />
-            {browserNotifications ? "Notifications Enabled" : "Enable Notifications"}
+            <Mail className="h-4 w-4" />
+            Send All Invitations
           </Button>
-
-          <Link href="/dashboard/parties/new">
-            <Button className="bg-amber-400 hover:bg-amber-300 text-gray-900 transition-all duration-300 
-            hover:scale-110 hover:shadow-lg hover:shadow-amber-500/20">
-              New Event
+          <Link href={`/dashboard/parties/${partyId}/confirmed`}>
+            <Button variant="outline" className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700">
+              View Confirmed List
             </Button>
           </Link>
+          <Button className="bg-amber-500 text-black hover:bg-amber-400">Save Changes</Button>
         </div>
       </div>
 
-      {/* Events List */}
-      <div className="space-y-4">
-        {filteredParties.map(party => {
-          const eventDate = parseEventDateTime(party.date, party.time)
-          const isPast = eventDate ? eventDate < new Date() : false
-
-          return (
-            <Card 
-              key={party.id} 
-              className="border-2 border-gray-700 bg-gray-800 cursor-pointer transition-all duration-300
-              hover:border-3 hover:border-amber-400 hover:-translate-y-3 hover:shadow-2xl hover:shadow-amber-500/30"
-            >
-              <CardHeader className="pb-2 relative">
-                <CardTitle className="text-xl text-white">
-                  {party.title}
-                  <span className={`ml-2 text-sm ${
-                    party.type === "international" ? "text-amber-400" : "text-gray-400"
-                  }`}>
-                    ({party.type})
-                  </span>
-                </CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="absolute top-4 right-4 text-red-400 hover:bg-red-900/20 transition-all duration-300 hover:scale-110"
-                  onClick={() => handleDeleteParty(party.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </CardHeader>
-              <CardContent className="text-white">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                  <div className="transition-all duration-300 p-2 rounded border border-gray-700
-                  hover:border-amber-400 hover:-translate-y-1 hover:shadow-md hover:shadow-amber-500/10 hover:scale-105">
-                    <p className="text-gray-400">Date & Time</p>
-                    <p>{party.date} {party.time}</p>
-                    {isPast && <span className="text-red-400 text-xs">(Past Event)</span>}
+      <Card className="border-gray-800 bg-gray-900 text-white">
+        <CardHeader>
+          <CardTitle className="font-bold">Manage RSVPs</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {party.invitees.map((invitee) => (
+              <div key={invitee.id} className="rounded-lg border border-gray-800 bg-gray-800 p-4">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <div className="font-medium">{invitee.email}</div>
+                    <div className="text-sm text-gray-400">WhatsApp: {invitee.whatsapp}</div>
                   </div>
-                  <div className="transition-all duration-300 p-2 rounded border border-gray-700
-                  hover:border-amber-400 hover:-translate-y-1 hover:shadow-md hover:shadow-amber-500/10 hover:scale-105">
-                    <p className="text-gray-400">Location</p>
-                    <p>{party.location}</p>
-                  </div>
-                  <div className="transition-all duration-300 p-2 rounded border border-gray-700
-                  hover:border-amber-400 hover:-translate-y-1 hover:shadow-md hover:shadow-amber-500/10 hover:scale-105">
-                    <p className="text-gray-400">Invitees</p>
-                    <p>{party.invitees} ({party.confirmed} confirmed)</p>
-                  </div>
-                  <div className="space-y-2">
-                    <Link href={`/dashboard/parties/${party.id}`}>
-                      <Button className="w-full bg-gray-700 hover:bg-gray-600 text-white transition-all duration-300
-                      hover:scale-105 hover:shadow-md hover:shadow-amber-500/20 hover:border hover:border-amber-400">
-                        Manage Event
+                  <div className="flex items-center gap-2">
+                    {invitee.allowPlusOne && (
+                      <div className="rounded-full bg-gray-700 px-3 py-1 text-xs">+1 Allowed</div>
+                    )}
+                    {invitee.invitationSent ? (
+                      <div className="rounded-full bg-gray-700 px-3 py-1 text-xs text-green-400">Invitation Sent</div>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-gray-700 bg-gray-700 text-white hover:bg-gray-600 flex items-center gap-1"
+                        onClick={() => sendInvitation(invitee.id)}
+                      >
+                        <Mail className="h-3 w-3" />
+                        <Phone className="h-3 w-3" />
+                        Send Invitation
                       </Button>
-                    </Link>
+                    )}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <Label className="mb-2 block">RSVP Status</Label>
+                    <RadioGroup
+                      value={invitee.rsvp}
+                      onValueChange={(value) => updateRSVP(invitee.id, value)}
+                      className="flex space-x-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="yes" id={`yes-${invitee.id}`} />
+                        <Label htmlFor={`yes-${invitee.id}`}>Yes</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="no" id={`no-${invitee.id}`} />
+                        <Label htmlFor={`no-${invitee.id}`}>No</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="maybe" id={`maybe-${invitee.id}`} />
+                        <Label htmlFor={`maybe-${invitee.id}`}>Maybe</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="pending" id={`pending-${invitee.id}`} />
+                        <Label htmlFor={`pending-${invitee.id}`}>Pending</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  {invitee.allowPlusOne && invitee.rsvp === "yes" && (
+                    <div>
+                      <Label htmlFor={`guest-${invitee.id}`} className="mb-2 block">
+                        Guest Name
+                      </Label>
+                      <Input
+                        id={`guest-${invitee.id}`}
+                        placeholder="Enter guest name"
+                        value={invitee.guestName}
+                        onChange={(e) => updateGuestName(invitee.id, e.target.value)}
+                        className="border-gray-700 bg-gray-700 text-white"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
