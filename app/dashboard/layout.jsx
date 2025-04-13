@@ -12,10 +12,10 @@ export default function DashboardLayout({ children }) {
 
   return (
     <div className="flex h-screen bg-black text-white">
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Button - Fixed to left side */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="md:hidden fixed top-4 right-4 z-50 p-2 rounded-lg bg-gray-800 hover:bg-gray-700"
+        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-gray-800 hover:bg-gray-700"
       >
         {isMobileMenuOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
       </button>
@@ -97,17 +97,15 @@ export default function DashboardLayout({ children }) {
 
       {/* Main content */}
       <div className="flex-1 overflow-auto">
-        <div className="flex h-16 items-center border-b border-gray-800 bg-gray-900 px-4 md:px-6">
-          <div className="ml-auto flex items-center">
-            <div className="flex items-center">
-              <Image 
-                src="/images/vkr-logo.png" 
-                alt="VKR Group" 
-                width={40} 
-                height={20} 
-                className="object-contain"
-              />
-            </div>
+        <div className="flex h-16 items-center justify-end border-b border-gray-800 bg-gray-900 px-4 md:px-6">
+          <div className="flex items-center mr-4 md:mr-0">
+            <Image 
+              src="/images/vkr-logo.png" 
+              alt="VKR Group" 
+              width={40} 
+              height={20} 
+              className="object-contain"
+            />
           </div>
         </div>
         <div className="p-4 md:p-6">{children}</div>
