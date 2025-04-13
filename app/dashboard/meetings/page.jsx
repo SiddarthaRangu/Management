@@ -1,62 +1,35 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import Link from "next/link"
-import { useParams, useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Mail, Phone } from "lucide-react"
+import { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Mail, Phone, Trash2 } from "lucide-react";
 
 export default function PartyDetailsPage() {
-  const router = useRouter()
-  const params = useParams()
-  const partyId = params.id
-  const [timeoutId, setTimeoutId] = useState(null)
+  const router = useRouter();
+  const params = useParams();
+  const partyId = params.id;
+  const [timeoutId, setTimeoutId] = useState(null);
 
-  // Editable party state
+  // ✅ Missing states added here
+  const [meetings, setMeetings] = useState([]);
+  const [filter, setFilter] = useState("all");
+
   const [party, setParty] = useState({
     id: partyId,
     title: "Spring Networking Event",
     date: "2025-04-20",
     time: "18:00",
     location: "Grand Hotel",
-    invitees: [
-      {
-        id: 1,
-        email: "john@example.com",
-        whatsapp: "+1234567890",
-        allowPlusOne: true,
-        rsvp: "pending",
-        guestName: "",
-        invitationSent: false,
-      },
-        {
-          id: 2,
-          title: "Quarterly Review",
-          date: "2025-04-18",
-          time: "2:00 PM",
-          company: "TechGiant Inc",
-          host: "VKR",
-          attendees: ["ceo@techgiant.com", "cfo@techgiant.com"],
-          type: "international",
-        },
-      {
-        id: 3,
-        title: "Partnership Discussion",
-        date: "2025-04-22",
-        time: "11:30 AM",
-        company: "Innovate LLC",
-        host: "VKR",
-        attendees: ["partner@innovate.com", "legal@innovate.com"],
-        type: "international",
-      },
-    ],
-  })
+    invitees: [],
+  });
 
   useEffect(() => {
     const initialMeetings = [
@@ -66,17 +39,10 @@ export default function PartyDetailsPage() {
         date: "2025-04-20",
         time: "18:00",
         location: "Grand Hotel",
-        invitees: [
-          {
-            id: 1,
-            email: "john@example.com",
-            whatsapp: "+1234567890",
-            allowPlusOne: true,
-            rsvp: "pending",
-            guestName: "",
-            invitationSent: false,
-          },
-        ],
+        company: "Hotel Group",
+        host: "VKR",
+        attendees: ["john@example.com"],
+        type: "national",
       },
       {
         id: 2,
@@ -98,24 +64,28 @@ export default function PartyDetailsPage() {
         attendees: ["partner@innovate.com", "legal@innovate.com"],
         type: "international",
       },
-    ]
-    setMeetings(initialMeetings)
-    saveData("meetings", initialMeetings)
-  }, [])
+    ];
+
+    setMeetings(initialMeetings);
+    localStorage.setItem("meetings", JSON.stringify(initialMeetings));
+  }, []);
 
   const handleDelete = (meetingId) => {
     if (confirm("Are you sure you want to permanently delete this meeting?")) {
-      const updatedMeetings = meetings.filter((meeting) => meeting.id !== meetingId)
-      setMeetings(updatedMeetings)
-      saveData("meetings", updatedMeetings)
-      alert("Meeting deleted successfully!")
+      const updatedMeetings = meetings.filter((meeting) => meeting.id !== meetingId);
+      setMeetings(updatedMeetings);
+      localStorage.setItem("meetings", JSON.stringify(updatedMeetings));
+      toast.success("Meeting deleted successfully!");
     }
-  }
+  };
 
-  const filteredMeetings = meetings.filter((meeting) => (filter === "all" ? true : meeting.type === filter))
+  const filteredMeetings = meetings.filter((meeting) =>
+    filter === "all" ? true : meeting.type === filter
+  );
 
   return (
     <div className="space-y-6">
+      <ToastContainer />
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <h1 className="text-3xl font-extrabold">Professional Meetings</h1>
         <div className="flex gap-4">
@@ -153,7 +123,9 @@ export default function PartyDetailsPage() {
               <CardTitle className="text-xl font-bold">
                 {meeting.title}
                 <span
-                  className={`ml-2 text-sm ${meeting.type === "international" ? "text-amber-400" : "text-gray-400"}`}
+                  className={`ml-2 text-sm ${
+                    meeting.type === "international" ? "text-amber-400" : "text-gray-400"
+                  }`}
                 >
                   ({meeting.type})
                 </span>
@@ -191,5 +163,5 @@ export default function PartyDetailsPage() {
         ))}
       </div>
     </div>
-  )
+  );
 }
