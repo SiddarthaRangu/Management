@@ -185,10 +185,6 @@ export default function PartyDetailsPage() {
                         <Label htmlFor={`no-${invitee.id}`}>No</Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="maybe" id={`maybe-${invitee.id}`} />
-                        <Label htmlFor={`maybe-${invitee.id}`}>Maybe</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
                         <RadioGroupItem value="pending" id={`pending-${invitee.id}`} />
                         <Label htmlFor={`pending-${invitee.id}`}>Pending</Label>
                       </div>
