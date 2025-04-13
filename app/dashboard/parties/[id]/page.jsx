@@ -15,7 +15,6 @@ export default function PartyDetailsPage() {
   const params = useParams()
   const partyId = params.id
 
-  // Mock party data
   const [party, setParty] = useState({
     id: partyId,
     title: "Spring Networking Event",
@@ -105,95 +104,107 @@ export default function PartyDetailsPage() {
     )
     setParty({ ...party, invitees: updatedInvitees })
     alert(`Invitations sent to ${pendingInvitees.length} guests via email and WhatsApp!`)
-  }
+  }// ... (keep existing state and logic the same)
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-extrabold">{party.title}</h1>
-          <p className="text-gray-400">
+    <div className="space-y-6 p-4 md:p-6">
+      {/* Header Section */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="space-y-2">
+          <h1 className="text-2xl font-extrabold md:text-3xl">{party.title}</h1>
+          <p className="text-sm text-gray-400 md:text-base">
             {party.date} at {party.time} • {party.location}
           </p>
         </div>
-        <div className="flex space-x-4">
-          <Button
-            variant="outline"
-            className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700 flex items-center gap-2"
-            onClick={sendAllInvitations}
-          >
-            <Mail className="h-4 w-4" />
-            Send All Invitations
-          </Button>
-          <Link href={`/dashboard/parties/${partyId}/confirmed`}>
-            <Button variant="outline" className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700">
-              View Confirmed List
+        
+        {/* Action Buttons */}
+        <div className="flex flex-col gap-2 sm:flex-row md:space-x-4">
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="w-full border-gray-700 bg-gray-800 text-white hover:bg-gray-700 md:w-auto"
+              onClick={sendAllInvitations}
+            >
+              <Mail className="h-4 w-4 md:mr-2" />
+              <span className="hidden md:block">Send All</span>
             </Button>
-          </Link>
-          <Button className="bg-amber-500 text-black hover:bg-amber-400">Save Changes</Button>
+            <Link href={`/dashboard/parties/${partyId}/confirmed`} className="w-full md:w-auto">
+              <Button variant="outline" className="w-full border-gray-700 bg-gray-800 text-white hover:bg-gray-700 md:w-auto">
+                Confirmed List
+              </Button>
+            </Link>
+          </div>
+          <Button className="w-full bg-amber-500 text-black hover:bg-amber-400 md:w-auto">
+            Save Changes
+          </Button>
         </div>
       </div>
 
+      {/* Main Content */}
       <Card className="border-gray-800 bg-gray-900 text-white">
         <CardHeader>
-          <CardTitle className="font-bold">Manage RSVPs</CardTitle>
+          <CardTitle className="text-xl font-bold md:text-2xl">Manage RSVPs</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
+          <div className="space-y-4">
             {party.invitees.map((invitee) => (
               <div key={invitee.id} className="rounded-lg border border-gray-800 bg-gray-800 p-4">
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">{invitee.email}</div>
-                    <div className="text-sm text-gray-400">WhatsApp: {invitee.whatsapp}</div>
+                {/* Invitee Header */}
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div className="space-y-1">
+                    <div className="font-medium break-all">{invitee.email}</div>
+                    <div className="text-xs text-gray-400 md:text-sm">WhatsApp: {invitee.whatsapp}</div>
                   </div>
+                  
+                  {/* Status Badges */}
                   <div className="flex items-center gap-2">
                     {invitee.allowPlusOne && (
-                      <div className="rounded-full bg-gray-700 px-3 py-1 text-xs">+1 Allowed</div>
+                      <div className="rounded-full bg-gray-700 px-2 py-1 text-xs">+1 Allowed</div>
                     )}
                     {invitee.invitationSent ? (
-                      <div className="rounded-full bg-gray-700 px-3 py-1 text-xs text-green-400">Invitation Sent</div>
+                      <div className="rounded-full bg-gray-700 px-2 py-1 text-xs text-green-400">Sent</div>
                     ) : (
                       <Button
                         size="sm"
                         variant="outline"
-                        className="border-gray-700 bg-gray-700 text-white hover:bg-gray-600 flex items-center gap-1"
+                        className="border-gray-700 bg-gray-700 text-white hover:bg-gray-600"
                         onClick={() => sendInvitation(invitee.id)}
                       >
-                        <Mail className="h-3 w-3" />
-                        <Phone className="h-3 w-3" />
-                        Send Invitation
+                        <Mail className="h-3 w-3 md:mr-1" />
+                        <Phone className="h-3 w-3 md:mr-1" />
+                        <span className="hidden md:inline">Send</span>
                       </Button>
                     )}
                   </div>
                 </div>
 
-                <div className="space-y-4">
+                {/* RSVP Section */}
+                <div className="mt-4 space-y-4">
                   <div>
                     <Label className="mb-2 block">RSVP Status</Label>
                     <RadioGroup
                       value={invitee.rsvp}
                       onValueChange={(value) => updateRSVP(invitee.id, value)}
-                      className="flex space-x-4"
+                      className="flex flex-col gap-2 sm:flex-row sm:gap-4"
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yes" id={`yes-${invitee.id}`} />
-                        <Label htmlFor={`yes-${invitee.id}`}>Yes</Label>
+                        <Label htmlFor={`yes-${invitee.id}`} className="text-sm">Yes</Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="no" id={`no-${invitee.id}`} />
-                        <Label htmlFor={`no-${invitee.id}`}>No</Label>
+                        <Label htmlFor={`no-${invitee.id}`} className="text-sm">No</Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="pending" id={`pending-${invitee.id}`} />
-                        <Label htmlFor={`pending-${invitee.id}`}>Pending</Label>
+                        <Label htmlFor={`pending-${invitee.id}`} className="text-sm">Pending</Label>
                       </div>
                     </RadioGroup>
                   </div>
 
                   {invitee.allowPlusOne && invitee.rsvp === "yes" && (
                     <div>
-                      <Label htmlFor={`guest-${invitee.id}`} className="mb-2 block">
+                      <Label htmlFor={`guest-${invitee.id}`} className="mb-2 block text-sm">
                         Guest Name
                       </Label>
                       <Input
