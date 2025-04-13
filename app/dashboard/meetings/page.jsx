@@ -1,32 +1,40 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import Link from "next/link"
+import { useParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Trash2 } from "lucide-react"
-import { loadData, saveData } from "@/lib/storage"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Mail, Phone } from "lucide-react"
 
-export default function MeetingsPage() {
-  const [filter, setFilter] = useState("all")
-  const [meetings, setMeetings] = useState([])
+export default function PartyDetailsPage() {
+  const router = useRouter()
+  const params = useParams()
+  const partyId = params.id
+  const [timeoutId, setTimeoutId] = useState(null)
 
-  useEffect(() => {
-    const savedMeetings = loadData("meetings")
-    if (savedMeetings && savedMeetings.length > 0) {
-      setMeetings(savedMeetings)
-    } else {
-      const initialMeetings = [
-        {
-          id: 1,
-          title: "Product Strategy Meeting",
-          date: "2025-04-15",
-          time: "10:00 AM",
-          company: "Acme Corp",
-          host: "VKR",
-          attendees: ["john@acmecorp.com", "sarah@acmecorp.com", "mike@acmecorp.com"],
-          type: "national",
-        },
+  // Editable party state
+  const [party, setParty] = useState({
+    id: partyId,
+    title: "Spring Networking Event",
+    date: "2025-04-20",
+    time: "18:00",
+    location: "Grand Hotel",
+    invitees: [
+      {
+        id: 1,
+        email: "john@example.com",
+        whatsapp: "+1234567890",
+        allowPlusOne: true,
+        rsvp: "pending",
+        guestName: "",
+        invitationSent: false,
+      },
         {
           id: 2,
           title: "Quarterly Review",
@@ -37,20 +45,62 @@ export default function MeetingsPage() {
           attendees: ["ceo@techgiant.com", "cfo@techgiant.com"],
           type: "international",
         },
-        {
-          id: 3,
-          title: "Partnership Discussion",
-          date: "2025-04-22",
-          time: "11:30 AM",
-          company: "Innovate LLC",
-          host: "VKR",
-          attendees: ["partner@innovate.com", "legal@innovate.com"],
-          type: "international",
-        },
-      ]
-      setMeetings(initialMeetings)
-      saveData("meetings", initialMeetings)
-    }
+      {
+        id: 3,
+        title: "Partnership Discussion",
+        date: "2025-04-22",
+        time: "11:30 AM",
+        company: "Innovate LLC",
+        host: "VKR",
+        attendees: ["partner@innovate.com", "legal@innovate.com"],
+        type: "international",
+      },
+    ],
+  })
+
+  useEffect(() => {
+    const initialMeetings = [
+      {
+        id: 1,
+        title: "Spring Networking Event",
+        date: "2025-04-20",
+        time: "18:00",
+        location: "Grand Hotel",
+        invitees: [
+          {
+            id: 1,
+            email: "john@example.com",
+            whatsapp: "+1234567890",
+            allowPlusOne: true,
+            rsvp: "pending",
+            guestName: "",
+            invitationSent: false,
+          },
+        ],
+      },
+      {
+        id: 2,
+        title: "Quarterly Review",
+        date: "2025-04-18",
+        time: "2:00 PM",
+        company: "TechGiant Inc",
+        host: "VKR",
+        attendees: ["ceo@techgiant.com", "cfo@techgiant.com"],
+        type: "international",
+      },
+      {
+        id: 3,
+        title: "Partnership Discussion",
+        date: "2025-04-22",
+        time: "11:30 AM",
+        company: "Innovate LLC",
+        host: "VKR",
+        attendees: ["partner@innovate.com", "legal@innovate.com"],
+        type: "international",
+      },
+    ]
+    setMeetings(initialMeetings)
+    saveData("meetings", initialMeetings)
   }, [])
 
   const handleDelete = (meetingId) => {
