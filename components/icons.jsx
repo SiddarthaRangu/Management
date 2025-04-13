@@ -41,83 +41,38 @@ export function CalendarIcon({ className }) {
   )
 }
 
-export function MeetingIcon({ className }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M21 5H3a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1Z" />
-      <path d="M9 21v-6" />
-      <path d="M15 21v-6" />
-      <path d="M3 10h18" />
-    </svg>
-  )
-}
+export const DashboardIcon = (props) => (
+  <svg {...props} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M13 3v6h8V3m-8 18h8V11h-8M3 21h8v-6H3m0-2h8V3H3v10z" />
+  </svg>
+)
 
-export function PartyIcon({ className }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M5.8 11.3 2 22l2-2" />
-      <path d="M2 22 22 2" />
-      <path d="M14 10 9 15" />
-      <path d="M18 6 13 11" />
-      <path d="M22 2 20 4" />
-      <path d="m22 2-5 5" />
-    </svg>
-  )
-}
+export const MeetingIcon = (props) => (
+  <svg {...props} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17 17h4v2h-4v-2m0-6h4v2h-4v-2m0-6h4v2h-4V5M3 21h14v-2H3v2m0-4h14v-2H3v2m0-6h14V9H3v2m0-6h14V3H3v2z" />
+  </svg>
+)
 
-export function DashboardIcon({ className }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <rect x="3" y="3" width="7" height="9" />
-      <rect x="14" y="3" width="7" height="5" />
-      <rect x="14" y="12" width="7" height="9" />
-      <rect x="3" y="16" width="7" height="5" />
-    </svg>
-  )
-}
+export const PartyIcon = (props) => (
+  <svg {...props} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M14 14.47V15a3 3 0 0 0-3-3 3 3 0 0 0-3 3v.53c0 .21.1.39.26.53l2.74 2.74 2.74-2.74c.16-.14.26-.32.26-.53m-5.5-3.47c0-.82.68-1.5 1.5-1.5s1.5.68 1.5 1.5-.68 1.5-1.5 1.5-1.5-.68-1.5-1.5M9 18.44l-2.73-2.73c-.18-.18-.27-.42-.27-.66V15c0-2.76 2.24-5 5-5s5 2.24 5 5v.05c0 .24-.09.48-.27.66L15 18.44 12 21.44 9 18.44M19 5v14h2V5h-2m-8 0v2h2V5h-2m-2 0h2v2H9V5m4 4v2h2V9h-2m-4 0h2v2H9V9m4 4v2h2v-2h-2m-4 0h2v2H9v-2z" />
+  </svg>
+)
 
-export function LogoutIcon({ className }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-      <polyline points="16 17 21 12 16 7" />
-      <line x1="21" y1="12" x2="9" y2="12" />
-    </svg>
-  )
-}
+export const LogoutIcon = (props) => (
+  <svg {...props} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z" />
+  </svg>
+)
+
+export const MenuIcon = (props) => (
+  <svg {...props} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z" />
+  </svg>
+)
+
+export const XIcon = (props) => (
+  <svg {...props} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+  </svg>
+)

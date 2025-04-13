@@ -25,7 +25,9 @@ export default function Home() {
           <div className="flex justify-center mb-6">
             <Image src="/images/vkr-logo.png" alt="VKR Group" width={180} height={100} className="object-contain" />
           </div>
-          <h1 className="text-3xl font-bold">Event Manager</h1>
+          <h1 className="text-3xl font-bold">SCHEDULE MANAGER
+            
+          </h1>
           <p className="mt-2 text-gray-400">Streamline your professional events</p>
         </div>
 

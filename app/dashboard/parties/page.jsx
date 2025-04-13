@@ -43,9 +43,45 @@ export default function PartiesPage() {
       setBrowserNotifications(true)
     }
     
-    const interval = setInterval(checkForEvents, 30000) // Check every 30 seconds
-    return () => clearInterval(interval)
+    // Store page load timestamp in sessionStorage to persist across renders
+    // but reset when page is actually reloaded
+    if (!sessionStorage.getItem('pageLoadTime')) {
+      sessionStorage.setItem('pageLoadTime', Date.now().toString())
+    }
+    
+    // Set up demo notification to appear after 3 minutes
+    const demoTimeoutId = setTimeout(() => {
+      showDemoNotification()
+    }, 3 * 60 * 1000) // 3 minutes in milliseconds
+    
+    // Set up regular check for normal event notifications
+    const checkInterval = setInterval(() => {
+      checkForEvents()
+    }, 30000) // Check every 30 seconds
+    
+    return () => {
+      clearTimeout(demoTimeoutId)
+      clearInterval(checkInterval)
+    }
   }, [])
+
+  const showDemoNotification = () => {
+    const demoNotification = {
+      id: `demo-${Date.now()}`,
+      partyId: 'demo',
+      title: 'Demo Notification',
+      message: 'Reminder: You have an event in 1 hour',
+      interval: 60 * 60 * 1000
+    }
+    
+    setNotifications(prev => [demoNotification, ...prev])
+    
+    if (browserNotifications) {
+      new Notification("Event Reminder", { 
+        body: "Reminder: You have an event in 1 hour" 
+      })
+    }
+  }
 
   const initializeParties = () => {
     const initialParties = [
@@ -184,58 +220,75 @@ export default function PartiesPage() {
 
       {/* Events List */}
       <div className="space-y-4">
-        {filteredParties.map(party => {
-          const eventDate = parseEventDateTime(party.date, party.time)
-          const isPast = eventDate ? eventDate < new Date() : false
-
-          return (
-            <Card key={party.id} className="border-gray-700 bg-gray-800">
-              <CardHeader className="pb-2 relative">
-                <CardTitle className="text-xl text-white">
-                  {party.title}
-                  <span className={`ml-2 text-sm ${
-                    party.type === "international" ? "text-amber-400" : "text-gray-400"
-                  }`}>
-                    ({party.type})
-                  </span>
-                </CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="absolute top-4 right-4 text-red-400 hover:bg-red-900/20"
-                  onClick={() => handleDeleteParty(party.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </CardHeader>
-              <CardContent className="text-white">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                  <div>
-                    <p className="text-gray-400">Date & Time</p>
-                    <p>{party.date} {party.time}</p>
-                    {isPast && <span className="text-red-400 text-xs">(Past Event)</span>}
-                  </div>
-                  <div>
-                    <p className="text-gray-400">Location</p>
-                    <p>{party.location}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400">Invitees</p>
-                    <p>{party.invitees} ({party.confirmed} confirmed)</p>
-                  </div>
-                  <div className="space-y-2">
-                    <Link href={`/dashboard/parties/${party.id}`}>
-                      <Button className="w-full bg-gray-700 hover:bg-gray-600 text-white">
-                        Manage Event
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
+  {filteredParties.length === 0 ? (
+    <Card className="border-2 border-gray-700 bg-gray-800 cursor-pointer transition-all duration-300
+    hover:border-3 hover:border-amber-400 hover:-translate-y-3 hover:shadow-2xl hover:shadow-amber-500/30">
+      <CardContent className="text-white p-6">
+        <p className="text-center">No events found. Create a new event to get started.</p>
+      </CardContent>
+    </Card>
+  ) : (
+    filteredParties.map(party => {
+      const eventDate = parseEventDateTime(party.date, party.time)
+      const isPast = eventDate ? eventDate < new Date() : false
+      
+      return (
+        <Card 
+          key={party.id} 
+          className="border-2 border-gray-700 bg-gray-800 cursor-pointer transition-all duration-300
+          hover:border-3 hover:border-amber-400 hover:-translate-y-3 hover:shadow-2xl hover:shadow-amber-500/30"
+        >
+          <CardHeader className="pb-2 relative">
+            <CardTitle className="text-xl text-white">
+              {party.title}
+              <span className={`ml-2 text-sm ${
+                party.type === "international" ? "text-amber-400" : "text-gray-400"
+              }`}>
+                ({party.type})
+              </span>
+            </CardTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute top-4 right-4 text-red-400 hover:bg-red-900/20 transition-all duration-300 hover:scale-110"
+              onClick={() => handleDeleteParty(party.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </CardHeader>
+          <CardContent className="text-white">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div className="transition-all duration-300 p-2 rounded border border-gray-700
+              hover:border-amber-400 hover:-translate-y-1 hover:shadow-md hover:shadow-amber-500/10 hover:scale-105">
+                <p className="text-gray-400">Date & Time</p>
+                <p>{party.date} {party.time}</p>
+                {isPast && <span className="text-red-400 text-xs">(Past Event)</span>}
+              </div>
+              <div className="transition-all duration-300 p-2 rounded border border-gray-700
+              hover:border-amber-400 hover:-translate-y-1 hover:shadow-md hover:shadow-amber-500/10 hover:scale-105">
+                <p className="text-gray-400">Location</p>
+                <p>{party.location}</p>
+              </div>
+              <div className="transition-all duration-300 p-2 rounded border border-gray-700
+              hover:border-amber-400 hover:-translate-y-1 hover:shadow-md hover:shadow-amber-500/10 hover:scale-105">
+                <p className="text-gray-400">Invitees</p>
+                <p>{party.invitees} ({party.confirmed} confirmed)</p>
+              </div>
+              <div className="space-y-2">
+                <Link href={`/dashboard/parties/${party.id}`}>
+                  <Button className="w-full bg-gray-700 hover:bg-gray-600 text-white transition-all duration-300
+                  hover:scale-105 hover:shadow-md hover:shadow-amber-500/20 hover:border hover:border-amber-400">
+                    Manage Event
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )
+    })
+  )}
+</div>
     </div>
   )
 }

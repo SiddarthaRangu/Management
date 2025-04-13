@@ -50,7 +50,7 @@ export default function Dashboard() {
           {isClient && typeof window !== "undefined" && "Notification" in window && Notification.permission !== "granted" && (
             <Button
               onClick={() => Notification.requestPermission()}
-              className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700 hover:text-amber-400"
+              className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700 hover:text-amber-400 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300"
             >
               Enable Notifications
             </Button>
@@ -58,25 +58,25 @@ export default function Dashboard() {
           <Link href="/dashboard/meetings/new">
             <Button
               variant="outline"
-              className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700 hover:text-amber-400"
+              className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700 hover:text-amber-400 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300"
             >
               New Meeting
             </Button>
           </Link>
           <Link href="/dashboard/parties/new">
-            <Button className="bg-amber-500 text-black hover:bg-amber-400">New Party</Button>
+            <Button className="bg-amber-500 text-black hover:bg-amber-400 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300">New Party</Button>
           </Link>
         </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border-gray-800 bg-gray-900 text-white hover:border-amber-500 transition-colors duration-300">
+        <Card className="border-2 border-gray-800 bg-gray-900 text-white hover:border-amber-500 hover:border-3 transform hover:-translate-y-3 hover:shadow-2xl hover:shadow-amber-500/30 transition-all duration-300 cursor-pointer">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div className="space-y-1">
               <CardTitle className="text-xl font-bold">Upcoming Meetings</CardTitle>
               <CardDescription className="text-gray-400">Your scheduled professional meetings</CardDescription>
             </div>
-            <MeetingIcon className="h-5 w-5 text-amber-400" />
+            <MeetingIcon className="h-5 w-5 text-amber-400 group-hover:animate-bounce" />
           </CardHeader>
           <CardContent>
             {upcomingMeetings.length > 0 ? (
@@ -84,7 +84,7 @@ export default function Dashboard() {
                 {upcomingMeetings.map((meeting) => (
                   <div
                     key={meeting.id}
-                    className="rounded-md border border-gray-800 bg-gray-800 p-4 hover:border-amber-500 transition-colors duration-300"
+                    className="rounded-md border-2 border-gray-800 bg-gray-800 p-4 hover:border-amber-500 hover:border-3 transform hover:-translate-y-2 hover:scale-105 hover:shadow-xl hover:shadow-amber-500/20 transition-all duration-300"
                   >
                     <div className="mb-2 text-lg font-medium">{meeting.title}</div>
                     <div className="text-sm text-gray-400">
@@ -96,7 +96,7 @@ export default function Dashboard() {
                   </div>
                 ))}
                 <Link href="/dashboard/meetings">
-                  <Button variant="link" className="mt-2 px-0 text-amber-400 hover:text-amber-300">
+                  <Button variant="link" className="mt-2 px-0 text-amber-400 hover:text-amber-300 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300">
                     View all meetings →
                   </Button>
                 </Link>
@@ -107,13 +107,13 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-gray-800 bg-gray-900 text-white hover:border-amber-500 transition-colors duration-300">
+        <Card className="border-2 border-gray-800 bg-gray-900 text-white hover:border-amber-500 hover:border-3 transform hover:-translate-y-3 hover:shadow-2xl hover:shadow-amber-500/30 transition-all duration-300 cursor-pointer">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div className="space-y-1">
               <CardTitle className="text-xl font-bold">Upcoming Parties</CardTitle>
               <CardDescription className="text-gray-400">Your scheduled business parties</CardDescription>
             </div>
-            <PartyIcon className="h-5 w-5 text-amber-400" />
+            <PartyIcon className="h-5 w-5 text-amber-400 group-hover:animate-bounce" />
           </CardHeader>
           <CardContent>
             {upcomingParties.length > 0 ? (
@@ -121,7 +121,7 @@ export default function Dashboard() {
                 {upcomingParties.map((party) => (
                   <div
                     key={party.id}
-                    className="rounded-md border border-gray-800 bg-gray-800 p-4 hover:border-amber-500 transition-colors duration-300"
+                    className="rounded-md border-2 border-gray-800 bg-gray-800 p-4 hover:border-amber-500 hover:border-3 transform hover:-translate-y-2 hover:scale-105 hover:shadow-xl hover:shadow-amber-500/20 transition-all duration-300"
                   >
                     <div className="mb-2 text-lg font-medium">{party.title}</div>
                     <div className="text-sm text-gray-400">
@@ -133,7 +133,7 @@ export default function Dashboard() {
                   </div>
                 ))}
                 <Link href="/dashboard/parties">
-                  <Button variant="link" className="mt-2 px-0 text-amber-400 hover:text-amber-300">
+                  <Button variant="link" className="mt-2 px-0 text-amber-400 hover:text-amber-300 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300">
                     View all parties →
                   </Button>
                 </Link>
