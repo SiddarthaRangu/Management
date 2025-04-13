@@ -13,28 +13,22 @@ export default function Dashboard() {
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    // Set client-side flag
     setIsClient(true)
-
-    // Load data from client-side storage
     const meetings = loadData("meetings") || []
     const parties = loadData("parties") || []
 
-    // Sort and slice meetings
     const sortedMeetings = meetings.sort((a, b) => new Date(a.date) - new Date(b.date)).slice(0, 2)
     setUpcomingMeetings(sortedMeetings.length > 0 ? sortedMeetings : [
       { id: 1, title: "Product Strategy Meeting", date: "2025-04-15", time: "10:00 AM", company: "Acme Corp" },
       { id: 2, title: "Quarterly Review", date: "2025-04-18", time: "2:00 PM", company: "TechGiant Inc" },
     ])
 
-    // Sort and slice parties
     const sortedParties = parties.sort((a, b) => new Date(a.date) - new Date(b.date)).slice(0, 2)
     setUpcomingParties(sortedParties.length > 0 ? sortedParties : [
       { id: 1, title: "Spring Networking Event", date: "2025-04-20", time: "6:00 PM", location: "Grand Hotel" },
       { id: 2, title: "Product Launch Celebration", date: "2025-04-25", time: "7:30 PM", location: "Skyline Lounge" },
     ])
 
-    // Notification permission check
     if (typeof window !== "undefined" && "Notification" in window) {
       if (Notification.permission !== "granted" && Notification.permission !== "denied") {
         console.log("Notification permission not yet granted")
@@ -44,19 +38,21 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <div className="flex space-x-4">
-          <Link href="/dashboard/meetings/new">
+        <div className="grid grid-cols-2 gap-2 w-full xs:w-auto xs:flex xs:gap-4">
+          <Link href="/dashboard/meetings/new" className="h-full">
             <Button
               variant="outline"
-              className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700 hover:text-amber-400 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300"
+              className="w-full text-sm px-4 py-2 border-gray-700 bg-gray-800 text-white hover:bg-gray-700 hover:text-amber-400 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300"
             >
               New Meeting
             </Button>
           </Link>
-          <Link href="/dashboard/parties/new">
-            <Button className="bg-amber-500 text-black hover:bg-amber-400 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300">New Party</Button>
+          <Link href="/dashboard/parties/new" className="h-full">
+            <Button className="w-full text-sm px-4 py-2 bg-amber-500 text-black hover:bg-amber-400 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300">
+              New Party
+            </Button>
           </Link>
         </div>
       </div>
