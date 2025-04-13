@@ -1,7 +1,19 @@
 import type { Metadata } from 'next'
 import './globals.css'
 // app/layout.jsx
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
+function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html>
+      <body>
+        {children}
+        <ToastContainer />
+      </body>
+    </html>
+  )
+}
 
 export const metadata: Metadata = {
   title: 'v0 App',
