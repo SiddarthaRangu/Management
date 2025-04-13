@@ -40,17 +40,9 @@ export default function Dashboard() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <div className="grid grid-cols-2 gap-2 w-full xs:w-auto xs:flex xs:gap-4">
-          <Link href="/dashboard/meetings/new" className="h-full">
-            <Button
-              variant="outline"
-              className="w-full text-sm px-4 py-2 border-gray-700 bg-gray-800 text-white hover:bg-gray-700 hover:text-amber-400 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300"
-            >
-              New Meeting
-            </Button>
-          </Link>
-          <Link href="/dashboard/parties/new" className="h-full">
-            <Button className="w-full text-sm px-4 py-2 bg-amber-500 text-black hover:bg-amber-400 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300">
+        <div className="flex justify-end w-full sm:w-auto">
+          <Link href="/dashboard/parties/new" className="w-full sm:w-auto">
+            <Button className="w-full bg-amber-500 text-black hover:bg-amber-400 transform hover:-translate-y-1 hover:scale-110 transition-all duration-300">
               New Party
             </Button>
           </Link>
