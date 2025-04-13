@@ -34,9 +34,9 @@ export default function PartiesPage() {
       setNotifications(prev => [{
         id: `demo-${Date.now()}`,
         title: 'Event Reminder',
-        message: 'Demo notification every 3 minutes',
+        message: 'You have an event in 1 Hour',
       }, ...prev])
-    }, 3 * 60 * 1000)
+    },0.45*60 * 1000)
 
     return () => clearInterval(interval)
   }, [])
